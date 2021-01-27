@@ -64,11 +64,11 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
     
     # Set the right counter name when the mouse hovers over the bars
     if activity == 'Running':
-        counter_name = 'Number of runs'
+        counter_name = 'Number of Runs'
     elif activity == 'Cycling':
-        counter_name = 'Number of bike rides'
+        counter_name = 'Number of Bike Rides'
     else:
-        counter_name = 'Number of walks'
+        counter_name = 'Number of Walks'
     
     # Information when the mouse is hovered over the bars
     tooltips = [('Distance', "@Distance_km{0,0.00} km"), ('Time', "@time_spent"),
