@@ -79,11 +79,13 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
     # If the chosen statistic was Time, the title will only change due to the activity. The label for the 
     # y-axis will always be Hours
     if statistic == 'Time':
-        title = 'Amount of Time Spent '+activity # Adapt the title based on the activity
         label = 'Hours' # Y-axis label
         
-        if period == 'monthly':
-            title = title+' '+'in'+' '+str(year) # Add the year in case it is monthly
+        if period == 'yearly':
+            title = 'Amount of Time Spent '+activity # Adapt the title based on the activity
+        
+        elif period == 'monthly':
+            title = 'Amount of Time Spent '+activity+' in '+str(year)
     
     # If the chosen statistic is Distance, the title will be adjusted according to the activity, and the
     # y-axis label will be Kilometers
