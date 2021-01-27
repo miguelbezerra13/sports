@@ -69,9 +69,11 @@ def monthly_statistics():
     # Plotting
     #####################################################################################################
     
-    sports_fig, height_choice, label_choice = title_label_plot('monthly', activity,
+    sports_fig, height_choice, label_choice, title = title_label_plot('monthly', activity,
                                                                        statistic, activity_df,
                                                                        year)[:-1]
+    
+    st.write(title)
     
     # Change the x_ticks to the names of the months
     x_ticks_dict = {}

@@ -85,7 +85,7 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
             title = 'Amount of Time Spent '+activity # Adapt the title based on the activity
         
         elif period == 'monthly':
-            title = 'Amount of Time Spent '+activity+' in '+str(year)
+            title = 'Amount of Time Spent '+activity+str(' in ')+str(year)
     
     # If the chosen statistic is Distance, the title will be adjusted according to the activity, and the
     # y-axis label will be Kilometers
@@ -151,6 +151,6 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
     
     sports_fig.vbar(x=x_axis, top=height_choice, width=0.9, source=source, color='color')
     
-    return sports_fig, height_choice, label_choice, source
+    return sports_fig, height_choice, label_choice, title, source
 
 
