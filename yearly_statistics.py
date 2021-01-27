@@ -3,6 +3,8 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 
+from general_functions import create_color_time_spent_columns
+
 from bokeh.models import ColumnDataSource, LabelSet
 from bokeh.plotting import figure
 
@@ -40,54 +42,8 @@ def yearly_statistics():
     # Add the counts column which comes from the grouped data by years and a counter is taken
     activity_df['count'] = df.loc[df.Type==activity].groupby('Year').count()['Date']
     
-    # Create a column with the colors of the bars. Green is the smallest, red the biggest and blue are the
-    # others. Create also the time labels
-    
-    color, time_spent = [], [] # Variable to hold the colors and the time labels
-    
-    for year in activity_df.index: # Loop over the years as they are the indices
-        
-        # Make sure the colors of the bars are set according to the statistic chosen
-        if statistic == 'Distance':
-            to_check = activity_df.Distance_km
-        elif statistic == 'Time':
-            to_check = activity_df.Time_h
-        elif statistic == 'Counter':
-            to_check = activity_df['count']
-    
-        # Add the color to the list
-        if to_check[year] == max(to_check):
-            color.append('red')
-        elif to_check[year] == min(to_check):
-            color.append('green')
-        else:
-            color.append('blue')
-        
-        # Create the time labels
-        hour = int(activity_df.Time_h[year]) # The integer part is the number of hours spent
-        
-        # By removing the integer part to the overall value, you get the minutes, which need to be multiplied
-        # by 60 and then rounded to no decimal cases
-        minutes = int(round((activity_df.Time_h[year]-hour)*60, 0))
-        
-        # Format the number of minutes
-        # When the number of minutes is between 1 and 9, add a 0 before it
-        time = None
-        if len(str(minutes)) == 1 and minutes != 0:
-            minutes = '0'+str(minutes)
-            
-        # When the number of minutes is 0, the label is just the hours
-        elif minutes == 0:
-            time = str(hour) 
-        
-        if type(time) != str: # If time is already defined, this step will not be taken
-            time = str(hour)+':'+str(minutes)+'\'' # Create the label
-        
-        time_spent.append(time) # Add the label to the list
-
-    # Add the columns to the dataframe
-    activity_df['color'] = color
-    activity_df['time_spent'] = time_spent
+    # Create the color and the time label columns
+    create_color_time_spent_columns(activity_df, statistic)
     
     #####################################################################################################
     # Plotting
@@ -95,7 +51,6 @@ def yearly_statistics():
     
     # Set the source as the curated dataframe
     source = ColumnDataSource(activity_df)
-
     
     # Set the right counter name when the mouse hovers over the bars
     if activity == 'Running':
