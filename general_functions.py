@@ -83,7 +83,7 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
         label = 'Hours' # Y-axis label
         
         if period == 'monthly':
-            title = title+' in '+str(year) # Add the year in case it is monthly
+            title = title+' '+'in'+' '+str(year) # Add the year in case it is monthly
     
     # If the chosen statistic is Distance, the title will be adjusted according to the activity, and the
     # y-axis label will be Kilometers
