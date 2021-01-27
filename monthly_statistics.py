@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 
-from general_functions import create_color_time_spent_columns
+from general_functions import create_color_time_spent_columns, title_label_plot
 
 from bokeh.models import ColumnDataSource, LabelSet
 from bokeh.models.tickers import FixedTicker
@@ -69,88 +69,9 @@ def monthly_statistics():
     # Plotting
     #####################################################################################################
     
-    # Set the source as the curated dataframe
-    source = ColumnDataSource(activity_df)
-
-    # Set the right counter name when the mouse hovers over the bars
-    if activity == 'Running':
-        counter_name = 'Number of runs'
-    elif activity == 'Cycling':
-        counter_name = 'Number of bike rides'
-    else:
-        counter_name = 'Number of walks'
-    
-    # Information when the mouse is hovered over the bars
-    tooltips = [('Distance', "@Distance_km{0,0.00} km"), ('Time', "@time_spent"),
-                ("Calories burned","@Calories{0,0}"), ("Cumulative Elevation Gain", "@ElevGain_m{0,0} m"),
-                ("Average Speed", "@avg_speed{0.00} km/h"), (counter_name, "@count")]
-    
-    # Set the title and the y-axis label
-    # If the chosen statistic was Time, the title will only change due to the activity. The label for the 
-    # y-axis will always be Hours
-    if statistic == 'Time':
-        title = 'Amount of Time Spent '+activity+'in '+str(year) # Adapt the title based on the activity
-        label = 'Hours' # Y-axis label
-    
-    # If the chosen statistic is Distance, the title will be adjusted according to the activity, and the
-    # y-axis label will be Kilometers
-    elif statistic == 'Distance':
-        if activity == 'Walking':
-            verb = 'Walked'
-        elif activity == 'Cycling':
-            verb = 'Cycled'
-        else:
-            verb = 'Run'
-        
-        # As it happened for Time, the same procedure is applied to Distance
-        title = 'Number of Kilometers '+verb+' per Month in '+str(year)
-        label = 'Kilometers'
-    
-    else:
-        title = counter_name+' per Month in '+str(year)
-        label = counter_name
-    
-    # Instantiate the figure
-    sports_fig = figure(title=title, x_axis_label='Month', y_axis_label=label, tooltips=tooltips,
-                        plot_width=900, plot_height=500, tools='save', sizing_mode='scale_both')
-
-    # Tweak the title
-    sports_fig.title.align = 'center'
-    sports_fig.title.text_font_size = "20px"
-
-    # Remove unnecessary graph elements
-    # Remove gridlines
-    sports_fig.xgrid.grid_line_color, sports_fig.ygrid.grid_line_color = None, None
-
-    # Remove x axis minor ticks
-    sports_fig.xaxis.minor_tick_line_color = None
-    
-    # Remove outline line
-    sports_fig.outline_line_color = None
-    
-    # Change the x_ticks to the names of the months
-    x_ticks_dict = {} # Dictionary that will hold the old and the new values for the x-ticks
-    
-    # List with the names of the months
-    month_name = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    
-    # Assign the month number to its name
-    for month in activity_df.index:
-        x_ticks_dict[month] = month_name[month-1]
-    
-    sports_fig.xaxis.ticker = FixedTicker(ticks=activity_df.index) # Show all the months as x-ticks
-    sports_fig.xaxis.major_label_overrides = x_ticks_dict # Override the x-tick labels
-    
-    # Vertical bars
-    # Set the bar height based on the chosen statistic and choose the data labels accordingly
-    if statistic == 'Distance':
-        height_choice = label_choice = 'Distance_km'
-    elif statistic == 'Time':
-        height_choice, label_choice = 'Time_h', 'time_spent'
-    else:
-        height_choice = label_choice = 'count'
-        
-    sports_fig.vbar(x='Month', top=height_choice, width=0.9, source=source, color='color')
+    sports_fig, height_choice, label_choice = title_label_plot('monthly', activity,
+                                                                       statistic, activity_df,
+                                                                       year)[:-1]
     
     # Change the x_ticks to the names of the months
     x_ticks_dict = {}
@@ -158,7 +79,8 @@ def monthly_statistics():
     for month in activity_df.index:
         x_ticks_dict[month] = month_name[month-1]
 
-    sports_fig.xaxis.major_label_overrides = x_ticks_dict
+    sports_fig.xaxis.ticker = FixedTicker(ticks=activity_df.index) # Show all the months as x-ticks
+    sports_fig.xaxis.major_label_overrides = x_ticks_dict # Override the x-tick labels
         
     # Get the labels - it is necessary to have a "new" source without NaN values
     new_source=ColumnDataSource(activity_df.dropna())

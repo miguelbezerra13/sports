@@ -132,13 +132,5 @@ def time_spent_moving_per_year():
     
     time_pie.legend.location = "center_right"
     
-# =============================================================================
-#     all_message_1 = Label(x=0.65, y=0.25, text='Total Amount of Time:')
-#     all_message_2 = Label(x=0.8, y=0.175, text=all_time)
-#     
-#     time_pie.add_layout(all_message_1)
-#     time_pie.add_layout(all_message_2)
-# =============================================================================
-    
     # Show the figure
     st.bokeh_chart(time_pie, True)
