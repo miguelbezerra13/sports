@@ -151,6 +151,6 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
     
     sports_fig.vbar(x=x_axis, top=height_choice, width=0.9, source=source, color='color')
     
-    return sports_fig, height_choice, label_choice, title, source
+    return sports_fig, height_choice, label_choice, source
 
 

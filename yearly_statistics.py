@@ -49,7 +49,7 @@ def yearly_statistics():
     # Plotting
     #####################################################################################################
     
-    sports_fig, height_choice, label_choice, title, source = title_label_plot('yearly', activity, statistic, activity_df)
+    sports_fig, height_choice, label_choice, source = title_label_plot('yearly', activity, statistic, activity_df)
     
     height_choice
 
