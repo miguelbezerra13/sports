@@ -20,7 +20,7 @@ def yearly_statistics():
     
     col_1, col_2 = st.beta_columns(2)
     activity = col_1.selectbox('Activity:', sorted(df.Type.unique()))
-    statistic = col_2.selectbox('Statistic:', ('Counter', 'Distance', 'Time'))
+    statistic = col_2.selectbox('Statistic:', ('Count', 'Distance', 'Time'))
     
     #####################################################################################################
     # Data selection and curation

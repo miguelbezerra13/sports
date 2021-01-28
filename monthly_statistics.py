@@ -21,7 +21,7 @@ def monthly_statistics():
     
     # Variables to select the activity, the statistic and the year
     activity = col_1.selectbox('Activity:', sorted(df.Type.unique()))
-    statistic = col_2.selectbox('Statistic:', ['Counter', 'Distance', 'Time'])
+    statistic = col_2.selectbox('Statistic:', ['Count', 'Distance', 'Time'])
     
     # The available years are conditioned to the selected activity
     year_options = df.loc[df.Type==activity].Year.unique()

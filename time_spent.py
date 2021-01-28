@@ -11,7 +11,7 @@ from bokeh.transform import cumsum
 def time_spent_moving_per_year():
     
     # Page title
-    st.markdown("<h1 style='text-align: center;'>Time Spent</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Division of Time Spent</h1>", unsafe_allow_html=True)
     
     # Load the dataframe
     df = pd.read_csv('rwc.csv', index_col=0, parse_dates=['Date'])

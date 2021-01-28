@@ -18,7 +18,7 @@ def create_color_time_spent_columns(activity_df, statistic):
             to_check = activity_df.Distance_km
         elif statistic == 'Time':
             to_check = activity_df.Time_h
-        elif statistic == 'Counter':
+        elif statistic == 'Count':
             to_check = activity_df['count']
     
         # Add the color to the list
