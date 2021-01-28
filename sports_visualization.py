@@ -4,7 +4,7 @@ from multiapp import MultiApp
 from yearly_statistics import yearly_statistics
 from monthly_statistics import monthly_statistics
 from time_spent import time_spent_moving_per_year
-from activity_year_comparison import activity_year_comparison
+#from activity_year_comparison import activity_year_comparison
 
 st.set_page_config(page_title='Sports Visualizations', layout='centered')
 
