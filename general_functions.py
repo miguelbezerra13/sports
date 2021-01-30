@@ -57,18 +57,46 @@ def create_color_time_spent_columns(activity_df, statistic):
 
 # =============================================================================
 
-def title_label_plot(period, activity, statistic, activity_df, year=None):
+def define_counter_name(activity):
     
-    # Set the source as the curated dataframe
-    source = ColumnDataSource(activity_df)
-    
-    # Set the right counter name when the mouse hovers over the bars
     if activity == 'Running':
         counter_name = 'Number of Runs'
     elif activity == 'Cycling':
         counter_name = 'Number of Bike Rides'
     else:
         counter_name = 'Number of Walks'
+        
+    return counter_name
+
+# =============================================================================
+
+def visuals_standardization(fig):
+
+    # Tweak the title
+    fig.title.align = 'center'
+    fig.title.text_font_size = "20px"
+
+    # Remove unnecessary graph elements
+    # Remove gridlines
+    fig.xgrid.grid_line_color, fig.ygrid.grid_line_color = None, None
+
+    # Remove x axis minor ticks
+    fig.xaxis.minor_tick_line_color = None
+    
+    # Remove outline line
+    fig.outline_line_color = None
+    
+    # Start of the y range
+    fig.y_range.start = 0
+
+# =============================================================================
+
+def title_label_plot(period, activity, statistic, activity_df, year=None):
+    
+    # Set the source as the curated dataframe
+    source = ColumnDataSource(activity_df)
+    
+    counter_name = define_counter_name(activity)
     
     # Information when the mouse is hovered over the bars
     tooltips = [('Distance', "@Distance_km{0,0.00} km"), ('Time', "@time_spent"),
@@ -125,20 +153,8 @@ def title_label_plot(period, activity, statistic, activity_df, year=None):
     # Instantiate the figure
     sports_fig = figure(title=title, x_axis_label=x_axis, y_axis_label = label, tooltips=tooltips,
                         plot_width=900, plot_height=500, tools='save', sizing_mode='scale_both')
-
-    # Tweak the title
-    sports_fig.title.align = 'center'
-    sports_fig.title.text_font_size = "20px"
-
-    # Remove unnecessary graph elements
-    # Remove gridlines
-    sports_fig.xgrid.grid_line_color, sports_fig.ygrid.grid_line_color = None, None
-
-    # Remove x axis minor ticks
-    sports_fig.xaxis.minor_tick_line_color = None
     
-    # Remove outline line
-    sports_fig.outline_line_color = None
+    visuals_standardization(sports_fig)
 
     # Vertical bars
     # Set the bar height based on the chosen statistic and choose the data labels accordingly
