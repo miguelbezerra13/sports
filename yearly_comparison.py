@@ -24,10 +24,10 @@ def yearly_comparison():
     
     # Restrict the set of available years based on the chosen activity
     year_1_options = df.loc[df.Type==activity].Year.unique()
-    year_1 = col_3.selectbox('Base year', year_1_options)
+    year_1 = col_3.selectbox('Base year: (green)', year_1_options)
     
     year_2_options = np.delete(year_1_options, np.where(year_1_options == year_1))
-    year_2 = col_4.selectbox('Comparison year', year_2_options)
+    year_2 = col_4.selectbox('Comparison year: (red)', year_2_options)
         
     ##############################################################################################
     # Data selection and curation
