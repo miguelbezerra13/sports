@@ -3,43 +3,43 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 
-from general_functions import define_counter_name
-
 from bokeh.models import ColumnDataSource, FactorRange, Title
 from bokeh.plotting import figure
 
-def yearly_comparison():
+def two_activities_one_year_comparison():
     
     # Page title
-    st.markdown("<h1 style='text-align: center;'>Two Years - One Activity  Comparison</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Two Activities One Year Comparison Comparison</h1>", unsafe_allow_html=True)
     
     # Load the dataframe
     df = pd.read_csv('rwc.csv', index_col=0, parse_dates=['Date'])
     
+    # Variables declared but the logic is missing
     col_1, col_2, col_3, col_4 = st.beta_columns(4)
     
     # Variables to select the activity and the statistic
-    activity = col_1.selectbox('Activity:', sorted(df.Type.unique()))
+    year = col_1.selectbox('Year:', sorted(df.Year.unique()))
     statistic = col_2.selectbox('Statistic:', ('Count', 'Distance', 'Time'))
     
     # Restrict the set of available years based on the chosen activity
-    year_1_options = df.loc[df.Type==activity].Year.unique()
-    year_1 = col_3.selectbox('Base year: (green)', sorted(year_1_options))
+    activity_1_options = df.loc[df.Year==year].Type.unique()
+    activity_1 = col_3.selectbox('Base activity: (green)', activity_1_options)
     
-    year_2_options = np.delete(year_1_options, np.where(year_1_options == year_1))
-    year_2 = col_4.selectbox('Comparison year: (red)', sorted(year_2_options))
+    activity_2_options = np.delete(activity_1_options, np.where(activity_1_options == activity_1))
+    activity_2 = col_4.selectbox('Comparison activity: (red)', activity_2_options)
         
     ##############################################################################################
     # Data selection and curation
     ##############################################################################################
     
-    # Limit the data you will consider based on the activity and the years, group it by year and
-    # then by month, and sum it
+    # Limit the data you will consider based on the chosen year and the activities, group it by activities and
+    # then by month, and sum it. Even though there are only 3 activies, it is better to select them
+    # directly, rather than by selecting based on the negation of the remaining as more activities could
+    # be added in the future
+    pre_activity_df = df.loc[((df.Year==year) & ((df.Type==activity_1) | (df.Type==activity_2)))].\
+                      groupby(['Type', 'Month'])
     
-    pre_activity_df = df.loc[((df.Type==activity) & ((df.Year==year_1) | (df.Year==year_2)))].\
-                      groupby(['Year', 'Month'])
-    
-    activity_df = pre_activity_df.sum()
+    activity_df = pre_activity_df.sum().drop('Year', axis=1)
     
     # Round the decimal cases of the distance to 2
     activity_df.Distance_km = activity_df.Distance_km.round(2)
@@ -50,16 +50,11 @@ def yearly_comparison():
     # Add the counts column
     activity_df['count'] = pre_activity_df.count()['Date']
     
-    # Color and time labels columns
-    color, time_spent = np.array([]), np.array([])
-    # Loop through the index, which has 2 keys, but consider only the year's part for the colors
-    for year, month in activity_df.index:
-        
-        # Set one color to each year
-        if year == year_1:
-            color = np.append(color, 'green')
-        else:
-            color = np.append(color, 'red')
+    # Color (same color code as used in yearly_comparison.py) and time labels columns
+    color = ['green' if act == activity_1 else 'red' for act, month in activity_df.index] # Color column
+    
+    time_spent = np.array([])  # Time labels column
+    for year, month in activity_df.index: # Loop through the index, which has 2 keys
             
         # Create the time labels
         hour = int(activity_df.Time_h[year, month]) # The integer part is the number of hours spent
@@ -83,32 +78,31 @@ def yearly_comparison():
     # Dataframe which will be used to create the plots
     df_to_plot = pd.DataFrame(columns=activity_df.columns)
     
-    # Loop through the dataframe and consider only the years to check if they have all months
-    for year in activity_df.index.levels[0]:
+    # Loop through the dataframe and consider only the highest level of the grouping to check if they
+    # have all months
+    for act in activity_df.index.levels[0]:
         
-        # Restrict the dataframe to only one year at a time
-        single_year_df = activity_df.loc[year]
+        # Restrict the dataframe to only one activity
+        single_activity_df = activity_df.loc[act]
         
         for month in range(1,13): # Loop over the months
-            idx = str(year)+', '+str(month) # Create an index
+            idx = str(act)+', '+str(month) # Create an index
             
             # If there were activities during the month, add the row of the activity_df
-            if month in single_year_df.index:
-                df_to_plot.loc[idx] = activity_df.loc[year, month]
+            if month in single_activity_df.index:
+                df_to_plot.loc[idx] = activity_df.loc[act, month]
             # Add the no activity row if there were any activities
             else:
                 df_to_plot.loc[idx] = no_activity_row
-    
+        
     # List with the name of the months
     month_name = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     
     # List which will be on the x-axis
-    x_axis = [(month, str(year)) for year in [year_1, year_2] for month in month_name]
+    x_axis = [(month, act) for act in activity_df.index.levels[0] for month in month_name]
     
     # Add the list to the dataframe
     df_to_plot['x-axis'] = x_axis
-    
-    df_to_plot['years']=[year_1 if x<12 else year_2 for x in range(24)]
     
     #####################################################################################################
     # Plotting
@@ -117,38 +111,29 @@ def yearly_comparison():
     # Set the source as the curated dataframe
     source = ColumnDataSource(df_to_plot)
     
-    counter_name = define_counter_name(activity)
-    
     # Information when the mouse is hovered over the bars
     tooltips = [('Distance', "@Distance_km{0,0.00} km"), ('Time', "@time_spent"),
                 ("Calories burned","@Calories{0,0}"),
                 ("Cumulative Elevation Gain", "@ElevGain_m{0,0} m"),
-                ("Average Speed", "@avg_speed{0.00} km/h"), (counter_name, "@count")]
+                ("Average Speed", "@avg_speed{0.00} km/h"), ("Number of activities", "@count")]
     
     # Set the title and the y-axis label
     # The beginning and ending of the title will not change regardless of the activity
     title_beginning = 'Comparison of the '
-    title_ending = 'between '+str(year_1)+' and '+str(year_2)
+    title_ending = ' between '+activity_1+' and '+activity_2
     if statistic == 'Time':
-        title = title_beginning+'Time Spent '+activity
+        title = title_beginning+'Time Spent in '+str(year)
         label = 'Hours' # Y-axis label
     
     # If the chosen statistic is Distance
     elif statistic == 'Distance':
-        if activity == 'Walking':
-            verb = 'Walked'
-        elif activity == 'Cycling':
-            verb = 'Cycled'
-        else:
-            verb = 'Run'
-        
         # As it happened for Time, the same procedure is applied to Distance
-        title = title_beginning+'Number of Kilometers '+verb+' per Month'
+        title = title_beginning+'Distance Covered in '+str(year)+' per Month'
         label = 'Kilometers'
     
     else:
-        title = title_beginning+counter_name+' per Month'
-        label = counter_name
+        title = title_beginning+'Number of Activities in '+str(year)+' per Month'
+        label = 'Number of Activities'
     
     # Instantiate the figure
     comparison_fig = figure(y_axis_label=label, tooltips=tooltips,
@@ -191,6 +176,6 @@ def yearly_comparison():
     
     # Rotate the labels of the years
     comparison_fig.xaxis.major_label_orientation = 1
-    
+
     # Show the figure
-    st.bokeh_chart(comparison_fig, True)
+    st.bokeh_chart(comparison_fig, use_container_width=True)
