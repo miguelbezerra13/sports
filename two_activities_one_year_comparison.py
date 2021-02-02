@@ -18,7 +18,8 @@ def two_activities_one_year_comparison():
     col_1, col_2, col_3, col_4 = st.beta_columns(4)
     
     # Variables to select the activity and the statistic
-    year = col_1.selectbox('Year:', sorted(df.Year.unique()))
+    year_options=df.Year.unique()
+    year = col_1.slider('Year:', int(min(year_options)), int(max(year_options)), step=1)
     statistic = col_2.selectbox('Statistic:', ('Count', 'Distance', 'Time'))
     
     # Restrict the set of available years based on the chosen activity
