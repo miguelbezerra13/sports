@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, LabelSet
 from bokeh.models.tickers import FixedTicker
 from bokeh.models.tools import HoverTool
 
@@ -107,6 +107,30 @@ def evolution_of_time_spent_exercising():
     
     activities = list(activity_df.index.levels[0]) # List for the legend
     
+    if magnitude == 'Absolute':
+        
+        # Create a column for the total amount of time
+        total_time_y = [round(sum(df_to_plot[activities].loc[idx]),2) for idx in df_to_plot.index]
+        df_to_plot['total_time_y'] = total_time_y # Add to the dataframe
+        
+        # Create a column for the labels of the total amount of time
+        total_time_label = np.array([])
+        for t in total_time_y:
+            hours = str(int(t)) # Get the total amount of hours
+            minutes = int((t-int(t))*60) # Remove the hours to get the minutes left
+            
+            # Format the minutes to either not show or to have a 0 if there's only one digit
+            if minutes == 0: 
+                minutes = ''
+            elif minutes < 10:
+                minutes = '0'+str(minutes)
+            else:
+                minutes = str(minutes)
+            
+            total_time_label = np.append(total_time_label, hours+':'+minutes+"'")
+        
+        df_to_plot['total_time_label'] = total_time_label
+    
     #####################################################################################################
     # Plotting
     #####################################################################################################
@@ -155,7 +179,14 @@ def evolution_of_time_spent_exercising():
     
     # Tweak the title
     evo_fig.title.align = 'center'
-    evo_fig.title.text_font_size = "20px"    
+    evo_fig.title.text_font_size = "20px"
+
+    if magnitude == 'Absolute':
+        labels = LabelSet(x='year', y='total_time_y', text='total_time_label', level='glyph',
+                          text_align='center', source=source, render_mode='canvas', y_offset=3)
+    
+        # Add the labels to the figure
+        evo_fig.add_layout(labels)    
 
     # Remove the gridlines
     evo_fig.xgrid.grid_line_color, evo_fig.ygrid.grid_line_color = None, None
