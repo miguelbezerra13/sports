@@ -1,4 +1,4 @@
 bokeh==2.2.3
 numpy==1.19.2
-streamlit==0.75.0
+streamlit==1.4.0
 pandas==1.2.1
