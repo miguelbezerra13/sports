@@ -17,7 +17,7 @@ def monthly_statistics():
     # Load the dataframe
     df = pd.read_csv('rwc.csv', index_col=0, parse_dates=['Date'])
     
-    col_1, col_2, col_3 = st.beta_columns(3)
+    col_1, col_2, col_3 = st.columns(3)
     
     # Variables to select the activity, the statistic and the year
     activity = col_1.selectbox('Activity:', sorted(df.Type.unique()))

@@ -16,7 +16,7 @@ def last_3_years_performance():
     # Load the dataframe
     df = pd.read_csv('rwc.csv', index_col=0, parse_dates=['Date'])
     
-    col_1, col_2 = st.beta_columns(2)
+    col_1, col_2 = st.columns(2)
     
     # Variables to select the activity and the statistic
     activity = col_1.selectbox('Activity:', sorted(df.Type.unique()))

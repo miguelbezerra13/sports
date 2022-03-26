@@ -15,7 +15,7 @@ def two_activities_one_year_comparison():
     df = pd.read_csv('rwc.csv', index_col=0, parse_dates=['Date'])
     
     # Variables declared but the logic is missing
-    col_1, col_2, col_3, col_4 = st.beta_columns(4)
+    col_1, col_2, col_3, col_4 = st.columns(4)
     
     # Variables to select the activity and the statistic
     year_options=df.Year.unique()
