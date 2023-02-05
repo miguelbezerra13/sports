@@ -84,11 +84,11 @@ def monthly_statistics():
     # Get the labels - it is necessary to have a "new" source without NaN values
     new_source=ColumnDataSource(activity_df.dropna())
     
-    labels = LabelSet(x='Month', y=height_choice, text=label_choice, level='glyph', text_align='center',
-                      source=new_source, render_mode='canvas', y_offset=3, text_font_size='10pt')
+    # labels = LabelSet(x='Month', y=height_choice, text=str(label_choice), level='glyph', text_align='center',
+    #                   source=new_source, render_mode='canvas', y_offset=3, text_font_size='10pt')
     
     # Add the labels to the figure
-    sports_fig.add_layout(labels)
+    # sports_fig.add_layout(labels)
 
     # Show the figure
     st.bokeh_chart(sports_fig, True)

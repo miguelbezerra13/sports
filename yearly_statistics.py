@@ -51,14 +51,14 @@ def yearly_statistics():
     
     sports_fig, height_choice, label_choice, source = title_label_plot('yearly', activity, statistic, activity_df)
     
-    height_choice
+    # height_choice
 
     # Get the labels
-    labels = LabelSet(x='Year', y=height_choice, text=label_choice, level='glyph', text_align='center',
-                      source=source, render_mode='canvas', y_offset=3)
+    # labels = LabelSet(x='Year', y=height_choice, text=label_choice, level='glyph', text_align='center',
+                    #   source=source, render_mode='canvas', y_offset=3)
 
     # Add the labels to the figure
-    sports_fig.add_layout(labels)
+    # sports_fig.add_layout(labels)
 
     # Show the figure
     st.bokeh_chart(sports_fig, True)
